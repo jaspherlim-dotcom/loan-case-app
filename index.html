@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<title>贷款案件管理</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* Layout: gradient hero with the key number, a floating shortcut card, soft tinted tiles, card lists; fixed bottom tab bar with a raised AI-scan button */
+:root{
+  --bg:#f2f5fc; --surface:#ffffff; --fg:#141b33; --muted:#66708c; --line:#e2e7f3;
+  --tile:#e9effd; --tile-2:#f0ebfe;
+  --accent:#2f56e8; --accent-soft:#e4ebfd; --accent-fg:#ffffff;
+  --hero-a:#1f3fe0; --hero-b:#5b3ce6; --hero-c:#8a43e8; --hero-fg:#ffffff;
+  --ok:#14955a; --ok-soft:#e1f5ea; --warn:#c06a00; --warn-soft:#fff1dc; --bad:#d23a2f; --bad-soft:#fde6e4; --info:#2f56e8; --info-soft:#e4ebfd;
+  --ic-orange:#ff8a1f; --ic-orange-bg:#fff1e3; --ic-peach:#ff6a3d; --ic-peach-bg:#ffece5; --ic-violet:#6b4cf5; --ic-violet-bg:#efebff; --ic-blue:#1e88f5; --ic-blue-bg:#e3f1ff;
+  --f-body:"Plus Jakarta Sans","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-num:"Plus Jakarta Sans",system-ui,sans-serif;
+  --r:18px; --r-sm:12px;
+  --shadow:0 10px 30px -12px rgba(31,45,110,.25);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1122; --surface:#171c33; --fg:#e8ebf7; --muted:#9aa3c2; --line:#272e4d; --tile:#1c2443; --tile-2:#221d43;
+  --accent:#7d97ff; --accent-soft:#1f2a52; --accent-fg:#0d1122; --hero-a:#1a2ea8; --hero-b:#3b2aa8; --hero-c:#5d2fb0;
+  --ok:#4fd08f; --ok-soft:#14301f; --warn:#f0a94a; --warn-soft:#3a2a12; --bad:#ff7d72; --bad-soft:#3d1a18; --info:#7d97ff; --info-soft:#1f2a52;
+  --ic-orange-bg:#3a2612; --ic-peach-bg:#3a1e16; --ic-violet-bg:#261f4d; --ic-blue-bg:#132a45; --shadow:0 10px 30px -12px rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1122; --surface:#171c33; --fg:#e8ebf7; --muted:#9aa3c2; --line:#272e4d; --tile:#1c2443; --tile-2:#221d43;
+  --accent:#7d97ff; --accent-soft:#1f2a52; --accent-fg:#0d1122; --hero-a:#1a2ea8; --hero-b:#3b2aa8; --hero-c:#5d2fb0;
+  --ok:#4fd08f; --ok-soft:#14301f; --warn:#f0a94a; --warn-soft:#3a2a12; --bad:#ff7d72; --bad-soft:#3d1a18; --info:#7d97ff; --info-soft:#1f2a52;
+  --ic-orange-bg:#3a2612; --ic-peach-bg:#3a1e16; --ic-violet-bg:#261f4d; --ic-blue-bg:#132a45; --shadow:0 10px 30px -12px rgba(0,0,0,.6); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--hero-a)}
+.inner{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* hero */
+.hero{margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 14px);padding-bottom:64px;color:var(--hero-fg);
+  background:linear-gradient(125deg,var(--hero-a) 0%,var(--hero-b) 55%,var(--hero-c) 100%);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-12%;top:-30%;width:70%;height:160%;background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,0));transform:skewX(-18deg);pointer-events:none}
+.hero.compact{padding-bottom:22px}
+.hero .inner{position:relative;z-index:1}
+.htop{display:flex;align-items:center;gap:10px}
+.brandpill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 12px 6px 6px;font-weight:700;font-size:14px;white-space:nowrap}
+.brandpill .logo{width:28px;height:28px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.searchpill{flex:1;min-width:0;display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:0 14px;height:40px}
+.searchpill svg{flex:none}
+.searchpill input{border:0;background:transparent;padding:0;height:100%;color:#141b33;font:inherit;font-size:14px;width:100%;outline:none}
+.searchpill input::placeholder{color:#7c86a3}
+.langpill{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;height:40px;min-width:48px;padding:0 12px;font-weight:700;font:inherit;font-weight:700;cursor:pointer}
+.hkey{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:22px}
+.hkey .lbl{font-size:14px;opacity:.9;display:flex;align-items:center;gap:6px}
+.hkey .num{font-family:var(--f-num);font-weight:800;font-size:clamp(30px,8vw,40px);letter-spacing:-.01em;line-height:1.1;font-variant-numeric:tabular-nums}
+.hkey .meta{font-size:13px;opacity:.85;margin-top:2px}
+.outline-pill{border:1.5px solid rgba(255,255,255,.85);color:#fff;background:transparent;border-radius:999px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap}
+.htitle{font-size:22px;font-weight:800;margin:18px 0 0;text-wrap:balance}
+.hsub{font-size:13px;opacity:.85;margin:4px 0 0}
+.mode{font-size:11px;opacity:.85;margin-top:10px}
+/* quick card */
+.quick{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);margin-top:-46px;position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);padding:16px 6px}
+.qbtn{display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;color:var(--fg);font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:4px;text-align:center}
+.qicon{width:56px;height:56px;border-radius:18px;display:grid;place-items:center}
+.qicon svg{width:30px;height:30px}
+.q1{background:var(--ic-orange-bg);color:var(--ic-orange)}.q2{background:var(--ic-peach-bg);color:var(--ic-peach)}.q3{background:var(--ic-violet-bg);color:var(--ic-violet)}.q4{background:var(--ic-blue-bg);color:var(--ic-blue)}
+main{padding-block:18px calc(110px + env(safe-area-inset-bottom,0px))}
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:6px 0 22px}
+.tile{background:var(--tile);border-radius:var(--r);padding:14px;display:flex;gap:12px;align-items:center;border:0;color:var(--fg);font:inherit;text-align:left;cursor:pointer;min-width:0}
+.tile.alt{background:var(--tile-2)}
+.tile .ti{width:44px;height:44px;border-radius:14px;background:var(--surface);display:grid;place-items:center;flex:none;color:var(--accent)}
+.tile b{display:block;font-size:15px}
+.tile small{color:var(--muted);font-size:12px}
+.tile .chip{display:inline-block;background:var(--surface);color:var(--accent);border-radius:8px;padding:2px 10px;font-weight:800;font-family:var(--f-num);margin-top:4px}
+.ringcard{background:var(--surface);border-radius:var(--r-sm);padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.ringcard .v{font-family:var(--f-num);font-weight:800;font-size:18px;white-space:nowrap}
+.sec{display:flex;align-items:baseline;gap:12px;margin:0 0 12px}
+.sec h2{font-size:18px;margin:0;font-weight:800}
+.sec .lnk{background:none;border:0;color:var(--accent);font:inherit;font-weight:700;cursor:pointer;padding:0}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin-bottom:24px}
+.sbtn{background:var(--surface);border:1.5px solid transparent;border-radius:var(--r-sm);padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font:inherit;color:var(--fg)}
+.sbtn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.sbtn .n{font-family:var(--f-num);font-weight:800;font-size:22px;line-height:1}
+.sbtn .l{font-size:12px;color:var(--muted);font-weight:600;text-align:center}
+.sdot{display:inline-block;width:8px;height:8px;border-radius:50%;vertical-align:1px}
+/* case cards */
+.clist{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.ccard{background:var(--surface);border:0;border-radius:var(--r);padding:14px 16px;text-align:left;font:inherit;color:var(--fg);cursor:pointer;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 0 var(--line);min-width:0}
+.ccard:hover{box-shadow:var(--shadow)}
+.ccard .top{display:flex;align-items:center;gap:8px;min-width:0}
+.ccard .who{font-weight:700;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.ccard .ty{color:var(--muted);font-size:13px}
+.ccard .bot{display:flex;align-items:center;gap:10px}
+.ccard .amt{font-family:var(--f-num);font-weight:800;font-size:17px}
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tabbar .bar-in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:end;padding:6px 0 4px}
+.tabbar button{background:none;border:0;font:inherit;font-size:12px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 10px;cursor:pointer}
+.tabbar button svg{width:24px;height:24px;display:block}
+.tabbar button span{line-height:1.2}
+.tabbar button[aria-current="true"]{color:var(--fg)}
+.tabbar .scan{position:relative;margin-top:-26px;padding:0 0 10px}
+.tabbar .scan .ring{width:66px;height:66px;border-radius:50%;background:var(--surface);display:grid;place-items:center;box-shadow:0 -4px 14px -6px rgba(31,45,110,.25)}
+.tabbar .scan .core{width:56px;height:56px;border-radius:50%;background:linear-gradient(140deg,#3d8bff,var(--hero-b) 60%,var(--hero-c));display:grid;place-items:center;color:#fff}
+.tabbar .scan .core svg{width:28px;height:28px}
+.tabbar .scan span.t{margin-top:2px}
+/* generic */
+h1{font-size:20px;margin:6px 0 4px;text-wrap:balance}
+h2{font-size:16px;margin:0 0 10px}
+.sub{color:var(--muted);margin:0 0 16px}
+button,.btn{font:inherit;cursor:pointer}
+.btn{background:var(--accent);color:var(--accent-fg);border:0;border-radius:999px;padding:9px 18px;font-weight:700}
+.btn.ghost{background:var(--accent-soft);color:var(--accent);border:0}
+.btn.danger{background:var(--bad-soft);color:var(--bad);border:0}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.spacer{flex:1}
+.panel{background:var(--surface);border-radius:var(--r);padding:18px;box-shadow:0 1px 0 var(--line)}
+.tablebox{overflow-x:auto;background:var(--surface);border-radius:var(--r);box-shadow:0 1px 0 var(--line)}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:12px;color:var(--muted);font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+.mono{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-weight:600}
+.pill{display:inline-block;font-size:12px;padding:3px 10px;border-radius:999px;white-space:nowrap;font-weight:700}
+.s-new{background:var(--info-soft);color:var(--info)}
+.s-collect{background:var(--warn-soft);color:var(--warn)}
+.s-review{background:var(--ic-violet-bg);color:var(--ic-violet)}
+.s-approved,.s-disbursed{background:var(--ok-soft);color:var(--ok)}
+.s-rejected{background:var(--bad-soft);color:var(--bad)}
+.d-new{background:var(--info)}.d-collect{background:var(--warn)}.d-review{background:var(--ic-violet)}.d-approved,.d-disbursed{background:var(--ok)}.d-rejected{background:var(--bad)}
+.bar{height:8px;background:var(--tile);border-radius:4px;overflow:hidden;min-width:60px;flex:1}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--hero-a),var(--hero-c));border-radius:4px}
+.bar.full i{background:var(--ok)}
+.pct{display:flex;align-items:center;gap:8px}
+.tag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:0 6px;white-space:nowrap}
+.tag.sample{color:var(--warn);border-color:var(--warn)}
+input,select,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;width:100%}
+textarea{min-height:64px;resize:vertical}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);font-weight:600;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters select{width:auto;border-radius:999px;padding:7px 12px;background:var(--surface)}
+.case{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.case{grid-template-columns:1fr}}
+.group{margin-bottom:16px}
+.group h3{font-size:12px;color:var(--muted);letter-spacing:.04em;margin:0 0 6px;font-weight:700}
+.item{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px 4px;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item input[type=checkbox]{width:20px;height:20px;margin-top:2px;accent-color:var(--ok)}
+.item .zh{font-weight:600}
+.item.done .zh{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--muted)}
+.item .en{font-size:12px;color:var(--muted)}
+.item .note{font-size:12px;color:var(--fg);margin-top:4px}
+.item .meta{font-size:11px;color:var(--muted);text-align:right;white-space:nowrap}
+.req{font-size:11px;color:var(--bad);margin-left:6px;font-weight:700}
+.opt{font-size:11px;color:var(--muted);margin-left:6px}
+.linkish{background:none;border:0;color:var(--accent);padding:0;font-size:12px;font-weight:700}
+.pipeline{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px}
+.pipeline button{border:0;background:var(--tile);color:var(--muted);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700}
+.pipeline button[aria-current="true"]{background:var(--accent);color:var(--accent-fg)}
+dl.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;margin:0}
+dl.kv dt{color:var(--muted);font-size:12px}
+dl.kv dd{margin:0;overflow-wrap:anywhere}
+.log{font-size:12px;color:var(--muted);max-height:220px;overflow:auto;margin:0;padding-left:16px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.ref{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.ref ul{margin:0;padding-left:18px}
+.ref li{margin:3px 0}
+.notice{font-size:13px;color:var(--fg);background:var(--warn-soft);border-radius:var(--r-sm);padding:10px 12px;margin:10px 0 16px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:13px;z-index:30}
+.backbtn{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:999px;width:40px;height:40px;display:grid;place-items:center;cursor:pointer;flex:none}
+.drop{display:inline-block;cursor:pointer}
+.up{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;border-top:1px solid var(--line);padding:12px 0}
+.up.settled{opacity:.75}
+.up.busy .thumb{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.5}}
+.thumb{width:96px;height:120px;border-radius:12px;background:var(--tile);overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.issues{background:var(--warn-soft);color:var(--fg);border-radius:var(--r-sm);padding:8px 12px;margin:8px 0;font-size:13px}
+.issues.ok{background:var(--ok-soft)}
+.issues ul{margin:4px 0 0;padding-left:18px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.h3{font-size:12px;color:var(--muted);margin:8px 0 6px;font-weight:700}
+.privacy{font-size:11px;color:var(--muted);margin:12px 0 0}
+a.linkish{text-decoration:none}
+.ai{background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(125deg,var(--hero-a),var(--hero-c)) border-box;border:1.5px solid transparent}
+@media (max-width:480px){.up{grid-template-columns:64px minmax(0,1fr)}.thumb{width:64px;height:84px}.qicon{width:50px;height:50px}.qbtn{font-size:12px}.brandpill .bt{display:none}.brandpill{padding:6px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div id="hero"></div>
+<main class="inner" id="app"><div class="empty">载入中…</div></main>
+<nav class="tabbar" id="tabbar"></nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// ---------- 文件清单模板 (一般马来西亚市场做法，需按合作银行/自家审批标准调整) ----------
+const DOC = {
+  ic:["身份证 (正反面)","NRIC copy (front & back)"],
+  appform:["已签名申请表","Signed application form"],
+  consent:["CCRIS / CTOS 查询授权书","CCRIS / CTOS consent"],
+  address:["地址证明 (水电/电话账单)","Proof of address (utility bill)"],
+  payslip3:["最近 3 个月工资单","Latest 3 months payslips"],
+  bank3sal:["最近 3 个月银行月结单 (显示薪水入账)","3 months bank statements (salary credit)"],
+  epf:["最新 EPF 公积金结单","Latest EPF (KWSP) statement"],
+  ea:["最新 EA 表格","Latest EA Form"],
+  be:["最新 BE 报税表 + LHDN 缴税证明","Latest BE Form + tax receipt"],
+  emp:["在职证明 / 聘请信","Employment confirmation letter"],
+  ssmbiz:["SSM 商业注册证书 + 商业资料","SSM registration cert + business profile"],
+  bank6:["最近 6 个月银行月结单","Latest 6 months bank statements"],
+  bform:["最近 2 年 B 表格 + 缴税证明","Latest 2 years Form B + tax receipt"],
+  bizlic:["营业执照 (地方政府)","Business licence (PBT)"],
+  co_form:["SSM 公司注册文件 (Form 9/24/49 或 Section 17/51/58)","SSM company docs (Form 9/24/49 or s.17/51/58)"],
+  co_profile:["最新 SSM 公司资料 (Company Profile)","Latest SSM company profile"],
+  co_const:["公司章程 (M&A / Constitution)","M&A / Constitution"],
+  co_br:["董事会决议 (授权借贷)","Board resolution to borrow"],
+  co_dir_ic:["所有董事及股东身份证","IC of all directors & shareholders"],
+  co_audit:["最近 2-3 年审计报告","Latest 2-3 years audited accounts"],
+  co_mgmt:["最新管理账 (Management Accounts)","Latest management accounts"],
+  co_bank6:["最近 6 个月公司银行月结单","Latest 6 months company bank statements"],
+  co_formc:["公司 Form C 报税","Company Form C"],
+  co_dir_tax:["董事个人报税表 (BE / B)","Directors' personal tax forms"],
+  co_cprof:["公司简介、主要客户合约或发票","Company profile, key contracts / invoices"],
+  co_premise:["营业场所租约或产权证明","Premises tenancy / title"],
+  co_guar:["董事个人担保文件","Directors' personal guarantee"],
+  ent_partner:["合伙协议 (如是合伙)","Partnership agreement (if any)"],
+  ent_owner_ic:["东主 / 所有合伙人身份证","IC of owner / all partners"],
+  h_booking:["订房表格 + 订金收据","Booking form + deposit receipt"],
+  h_spa:["买卖合约 (S&P Agreement)","Sale & Purchase Agreement"],
+  h_title:["地契副本 / 分层地契","Title / strata title copy"],
+  h_dev:["发展商确认信 + 付款进度表","Developer confirmation + progress billing schedule"],
+  h_val:["估价报告","Valuation report"],
+  h_offer:["卖方报价 / Offer letter","Offer letter from seller"],
+  h_redeem:["现有贷款赎回单 (Redemption Statement)","Redemption statement"],
+  h_loanstmt:["现有房贷 6-12 个月月结单","6-12 months existing loan statements"],
+  h_mrta:["MRTA / MLTA 房贷保险报价","MRTA / MLTA quotation"],
+  h_commit:["其他贷款承担清单 (车贷、卡债等)","List of other commitments"],
+  h_purpose:["套现用途说明","Purpose of cash-out"],
+  dc_list:["现有债务清单 (每笔余额、月供、贷款方)","List of existing debts (balance, instalment, lender)"],
+  dc_stmt:["各信用卡 / 贷款最新月结单","Latest statements of each card / loan"],
+  dc_settle:["各贷款方结清金额信 (Settlement Letter)","Settlement letters from each lender"],
+  dc_akpk:["AKPK 计划确认信 (如有参加)","AKPK programme letter (if enrolled)"],
+};
+const T = {
+  personal:{label:"个人贷款",en:"Personal Loan",profiles:{
+    salaried:{label:"受薪人士",groups:[["基本",[["ic",1],["appform",1],["consent",1],["address",0]]],["收入证明",[["payslip3",1],["bank3sal",1],["epf",1],["ea",1],["be",0],["emp",0]]]]},
+    self:{label:"自雇人士",groups:[["基本",[["ic",1],["appform",1],["consent",1],["address",0]]],["收入证明",[["ssmbiz",1],["bank6",1],["bform",1],["bizlic",0],["epf",0]]]]}
+  }},
+  business:{label:"商业贷款",en:"Business Loan",profiles:{
+    sdnbhd:{label:"私人有限公司 Sdn Bhd",groups:[["申请",[["appform",1],["consent",1]]],["公司注册",[["co_form",1],["co_profile",1],["co_const",0],["co_br",1],["co_dir_ic",1]]],["财务",[["co_audit",1],["co_mgmt",1],["co_bank6",1],["co_formc",0],["co_dir_tax",0]]],["业务与担保",[["co_cprof",0],["bizlic",0],["co_premise",0],["co_guar",1]]]]},
+    enterprise:{label:"独资 / 合伙 Enterprise",groups:[["申请",[["appform",1],["consent",1],["ent_owner_ic",1]]],["注册",[["ssmbiz",1],["ent_partner",0],["bizlic",0]]],["财务",[["bank6",1],["bform",1],["co_mgmt",0]]]]}
+  }},
+  housing:{label:"房屋贷款",en:"Housing Loan",profiles:{
+    salaried:{label:"受薪人士",groups:[["基本",[["ic",1],["appform",1],["consent",1],["h_commit",0]]],["收入证明",[["payslip3",1],["bank3sal",1],["epf",1],["ea",1],["be",0]]]]},
+    self:{label:"自雇人士",groups:[["基本",[["ic",1],["appform",1],["consent",1],["h_commit",0]]],["收入证明",[["ssmbiz",1],["bank6",1],["bform",1]]]]}
+  },subtypes:{
+    new:{label:"新房 (发展商)",docs:[["h_booking",1],["h_spa",1],["h_dev",1],["h_mrta",0]]},
+    subsale:{label:"二手房 Subsale",docs:[["h_offer",1],["h_spa",1],["h_title",1],["h_val",1],["h_mrta",0]]},
+  }},
+  refinance:{label:"再融资",en:"Refinance",subGroup:"房产文件",profiles:{
+    salaried:{label:"受薪人士",groups:[["基本",[["ic",1],["appform",1],["consent",1],["h_commit",0]]],["收入证明",[["payslip3",1],["bank3sal",1],["epf",1],["ea",1],["be",0]]]]},
+    self:{label:"自雇人士",groups:[["基本",[["ic",1],["appform",1],["consent",1],["h_commit",0]]],["收入证明",[["ssmbiz",1],["bank6",1],["bform",1]]]]}
+  },subtypes:{
+    refi:{label:"房产再融资 (换银行 / 降利息)",docs:[["h_title",1],["h_spa",1],["h_redeem",1],["h_loanstmt",1],["h_val",1],["h_mrta",0]]},
+    cashout:{label:"套现再融资 Cash-out",docs:[["h_title",1],["h_spa",1],["h_redeem",1],["h_loanstmt",1],["h_val",1],["h_purpose",1],["h_mrta",0]]}
+  }},
+  debtcon:{label:"债务整合",en:"Debt Consolidation",profiles:{
+    salaried:{label:"受薪人士",groups:[["基本",[["ic",1],["appform",1],["consent",1],["address",0]]],["收入证明",[["payslip3",1],["bank3sal",1],["epf",1],["ea",1],["be",0]]],["现有债务",[["dc_list",1],["dc_stmt",1],["dc_settle",1],["dc_akpk",0]]]]},
+    self:{label:"自雇人士",groups:[["基本",[["ic",1],["appform",1],["consent",1],["address",0]]],["收入证明",[["ssmbiz",1],["bank6",1],["bform",1]]],["现有债务",[["dc_list",1],["dc_stmt",1],["dc_settle",1],["dc_akpk",0]]]]}
+  }}
+};
+
+// ---------- 中英文切换 ----------
+let LANG="zh";try{LANG=localStorage.getItem("loanapp.lang")||"zh"}catch(e){}
+const EN={
+"案件总览":"Case Overview","客户":"Clients","开新案件":"New Case","文件清单":"Checklist","载入中…":"Loading…",
+"新申请":"New","文件收集中":"Collecting Docs","审核中":"Under Review","批准":"Approved","拒绝":"Rejected","已放款":"Disbursed",
+"受薪人士":"Salaried","自雇人士":"Self-employed","私人有限公司 Sdn Bhd":"Sdn Bhd company","独资 / 合伙 Enterprise":"Sole prop / Partnership",
+"新房 (发展商)":"New property (developer)","二手房 Subsale":"Subsale","房产再融资 (换银行 / 降利息)":"Property refinance (switch bank / lower rate)","套现再融资 Cash-out":"Cash-out refinance",
+"基本":"Basic","收入证明":"Income documents","申请":"Application","公司注册":"Company registration","财务":"Financials","业务与担保":"Business & guarantee","注册":"Registration","现有债务":"Existing debts","房产文件":"Property documents","其他文件":"Other documents",
+"受薪":"Salaried","自雇":"Self-employed","公司":"Company",
+"已同步 · 团队共享数据":"Synced · shared team data","本机模式":"Local mode","数据只存在这个浏览器":"data stays in this browser only",
+"全部":"All","所有贷款类型":"All loan types","所有状态":"All statuses","搜索案件编号、客户名字或 IC":"Search case no., client name or IC",
+"案件编号":"Case No.","贷款类型":"Loan type","金额":"Amount","状态":"Status","必交文件完成度":"Required docs","更新":"Updated","示例":"Sample","(客户已删除)":"(client deleted)",
+"没有符合筛选的案件。":"No cases match the filter.","还没有案件。先到「客户」登记客户，再「开新案件」。":"No cases yet. Register a client under Clients, then open a New Case.",
+"先登记客户资料，再为他开案件。一个客户可以有多宗案件。":"Register the client first, then open cases. One client can have several cases.",
+"编辑客户":"Edit client","登记新客户":"Register new client","姓名 / 公司名 *":"Name / company *","IC / 公司注册号 *":"IC / company reg. no. *","电话 *":"Phone *","工作类型":"Employment","月收入 (RM)":"Monthly income (RM)","地址":"Address","保存":"Save","登记客户":"Register client","取消":"Cancel",
+"姓名":"Name","IC / 注册号":"IC / Reg. no.","电话":"Phone","案件":"Cases","开案件":"Open case","编辑":"Edit","还没有客户。用上面的表格登记第一位。":"No clients yet. Use the form above to register the first one.",
+"选贷款类型和申请人类别，系统会自动生成文件清单。":"Pick the loan type and applicant category. The document checklist is generated automatically.",
+"客户 *":"Client *","选择客户":"Select client","贷款类型 *":"Loan type *","申请人类别 *":"Applicant category *","房产类别 *":"Property category *","申请金额 (RM)":"Loan amount (RM)","年限 (年)":"Tenure (years)","负责人":"Officer","例如：Agent A":"e.g. Agent A","会生成的文件清单":"Checklist that will be generated",
+"请先到「客户」登记客户。":"Please register a client under Clients first.","去登记客户":"Register a client",
+"必交":"Required","视情况":"If applicable","备注":"Note","备注：":"Note: ","已收 ":"Received ","删除":"Delete",
+"找不到这宗案件。":"Case not found.","回总览":"Back to overview","← 回总览":"← Back to overview","加其他文件，例如：银行要求的额外文件":"Add another document, e.g. extra doc the bank asks for","+ 加文件":"+ Add document",
+"案件状态":"Case status","必交文件已齐全，可以进入审核。":"All required documents received. Ready for review.","复制欠交文件清单 (发 WhatsApp 用)":"Copy outstanding list (for WhatsApp)",
+"案件资料":"Case details","年限":"Tenure","开案日期":"Opened","客户 IC":"Client IC","月收入":"Monthly income","案件备注":"Case notes","保存备注":"Save notes","确定删除？再按一次":"Really delete? Click again","删除案件":"Delete case","记录":"Activity",
+"文件清单参考":"Document checklist reference","加在受薪 / 自雇收入文件之上":"On top of the salaried / self-employed income documents",
+"这是马来西亚一般市场做法整理的清单，每家银行 / 金融机构要求不同，请按你们合作的贷款方标准修改。「必交」= 通常一定要；「视情况」= 看银行或个案。":"Based on general Malaysian market practice. Each bank or lender differs, so adjust to your lenders' requirements. Required = usually mandatory; If applicable = depends on the lender or case.",
+"状态已更新":"Status updated","备注已保存":"Note saved","已复制，可以贴到 WhatsApp":"Copied. Paste it into WhatsApp","请手动复制下面的文字":"Please copy the text below manually","案件已删除":"Case deleted","必交文件齐全了 ✓":"All required documents in ✓","已保存":"Saved","客户已登记":"Client registered","请选择客户":"Please select a client","案件已开，清单已生成":"Case opened, checklist generated","保存失败：":"Save failed: ","开案失败：":"Could not open case: ","读取失败：":"Load failed: ",
+"开案":"Open case","例如：只交了 2 个月，还欠 1 个月":"e.g. only 2 months given, 1 month outstanding"
+};
+const L=s=>LANG==="en"?(EN[s]??s):s;
+const tl=(t)=>LANG==="en"?t.en:t.label; // loan type label
+const docMain=it=>LANG==="en"&&!it.custom?it.en:it.zh;
+const docSub=it=>it.custom?"":(LANG==="en"?it.zh:it.en);
+const STATUSES=[["new","新申请"],["collect","文件收集中"],["review","审核中"],["approved","批准"],["rejected","拒绝"],["disbursed","已放款"]];
+const SLABEL=new Proxy({}, {get:(_,k)=>L((STATUSES.find(x=>x[0]===k)||[,k])[1])});
+
+function buildItems(type,profile,subtype){
+  const t=T[type], p=t.profiles[profile], out=[];
+  p.groups.forEach(([g,list])=>list.forEach(([k,r])=>out.push({key:k,group:g,req:!!r})));
+  if(t.subtypes&&subtype) t.subtypes[subtype].docs.forEach(([k,r])=>out.push({key:k,group:t.subGroup||"房产文件",req:!!r}));
+  return out.map(x=>({...x,zh:DOC[x.key][0],en:DOC[x.key][1],done:false,at:null,note:""}));
+}
+
+// ---------- 存储: 共享数据库 (发布后) 或本机模式 ----------
+const S={clients:[],cases:[],db:null,ready:false};
+const LS="loanapp.v1";
+function lsLoad(){try{return JSON.parse(localStorage.getItem(LS)||"null")}catch(e){return null}}
+function lsSave(){try{localStorage.setItem(LS,JSON.stringify({clients:S.clients,cases:S.cases}))}catch(e){}}
+async function put(col,obj){
+  if(S.db){await S.db.collection(col).doc(obj.id).set(strip(obj));}
+  else{const arr=S[col];const i=arr.findIndex(x=>x.id===obj.id);if(i>=0)arr[i]=obj;else arr.push(obj);lsSave();render();}
+}
+async function del(col,id){
+  if(S.db){await S.db.collection(col).doc(id).delete();}
+  else{S[col]=S[col].filter(x=>x.id!==id);lsSave();render();}
+}
+function strip(o){const c={...o};delete c.id;return c}
+function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+
+function localSample(){
+  const now=Date.now(),d=n=>new Date(now-n*864e5).toISOString();
+  const c1={id:"cli_demo1",name:"陈伟明 (示例)",ic:"880512-10-XXXX",phone:"012-345 6789",email:"",address:"Puchong, Selangor",employment:"受薪",income:6500,sample:true,createdAt:d(9)};
+  const c2={id:"cli_demo2",name:"Lim Trading Sdn Bhd (示例)",ic:"201901012345",phone:"016-222 3344",email:"",address:"Johor Bahru",employment:"公司",income:0,sample:true,createdAt:d(6)};
+  const mk=(id,no,cl,type,prof,sub,amt,st,doneN,ago)=>{const items=buildItems(type,prof,sub);items.slice(0,doneN).forEach(i=>{i.done=true;i.at=d(ago-1)});return{id,no,clientId:cl.id,type,profile:prof,subtype:sub||"",amount:amt,tenure:type==="housing"?35:5,officer:"Agent A",status:st,items,notes:"",sample:true,createdAt:d(ago),updatedAt:d(ago-1),log:[{at:d(ago),t:"开案"}]}};
+  return{clients:[c1,c2],cases:[mk("case_demo1","LN-0001",c1,"personal","salaried","",30000,"collect",5,8),mk("case_demo2","LN-0002",c2,"business","sdnbhd","",500000,"review",12,5),mk("case_demo3","LN-0003",c1,"housing","salaried","subsale",450000,"new",1,2),mk("case_demo4","LN-0004",c1,"debtcon","salaried","",45000,"collect",7,4)]};
+}
+
+async function boot(){
+  let db=null;
+  try{db=await (window.claude?.use?window.claude.use("db"):null)}catch(e){db=null}
+  const mode=document.getElementById("mode");
+  if(db){
+    S.db=db;S.mode="db";
+    let got=0;const timer=setTimeout(()=>{if(!S.ready){S.ready=true;render();}},10000);
+    ["clients","cases"].forEach(col=>db.collection(col).onSnapshot(snap=>{
+      S[col]=snap.docs.map(x=>({id:x.id,...x.data()}));
+      if(++got>=2||S.ready){clearTimeout(timer);S.ready=true}
+      render();
+    },err=>{toast(L("读取失败：")+err.message)}));
+  }else{
+    S.mode="local";
+    const saved=lsLoad();
+    const data=saved||localSample();S.clients=data.clients;S.cases=data.cases;S.ready=true;render();
+  }
+}
+
+// ---------- 视图 ----------
+const V={view:"dash",caseId:null,filterStatus:"",filterType:"",q:"",editingClient:null,newcaseClient:""};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rm=n=>n?"RM "+Number(n).toLocaleString("en-MY"):"—";
+const dt=s=>s?new Date(s).toLocaleDateString(LANG==="en"?"en-GB":"zh-CN",{year:"numeric",month:"2-digit",day:"2-digit"}):"";
+function pct(c){const r=c.items.filter(i=>i.req);const d=r.filter(i=>i.done).length;return{d,t:r.length,p:r.length?Math.round(d/r.length*100):0,all:c.items.filter(i=>i.done).length,allT:c.items.length}}
+function client(id){return S.clients.find(c=>c.id===id)}
+function typeLabel(c){const t=T[c.type];let s=tl(t)+" · "+L(t.profiles[c.profile]?.label||"");if(c.subtype&&t.subtypes)s+=" · "+L(t.subtypes[c.subtype].label);return s}
+function go(v,extra){Object.assign(V,{view:v},extra||{});render();window.scrollTo(0,0)}
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2200)}
+
+function render(){
+  document.documentElement.lang=LANG==="en"?"en":"zh";
+  const keepFocus=document.activeElement?.id;const pos=document.activeElement?.selectionStart;
+  $("#hero").innerHTML=heroHtml();$("#tabbar").innerHTML=tabbarHtml();
+  if(!S.ready){$("#app").innerHTML=`<div class="empty">${L("载入中…")}</div>`;return}
+  $("#app").innerHTML=({dash:vDash,clients:vClients,newcase:vNewCase,case:vCase,ref:vRef,scan:vScan}[V.view]||vDash)();
+  if(keepFocus){const el=document.getElementById(keepFocus);if(el&&el.tagName==="INPUT"&&el.type==="search"){el.focus();try{el.setSelectionRange(pos,pos)}catch(e){}}}
+}
+
+// ---------- 新界面: 头部、快捷卡、底部导航 ----------
+Object.assign(EN,{"首页":"Home","AI 扫描":"AI Scan","开案":"New","清单":"Checklist","登记客户":"Add client","进行中贷款总额":"Active loan amount","宗进行中案件":" active cases","需要跟进":"Needs follow-up","宗还欠文件":" missing docs","整体文件完成度":"Overall doc completion","必交文件":"Required docs","按状态":"By status","案件列表":"Cases","清除筛选":"Clear filter","选择要扫描文件的案件":"Choose a case to scan documents for","点一宗案件，就会打开相机或相册。":"Tap a case to open the camera or photo library.","客户资料":"Client records","在审核":"In review","宗等待审批":" awaiting decision"});
+const ICON={
+ plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="3" width="13" height="18" rx="2.5"/><path d="M8 8h5M8 12h3"/><circle cx="18" cy="17" r="4.2" fill="currentColor" stroke="none"/><path d="M18 15.2v3.6M16.2 17h3.6" stroke="#fff"/></svg>',
+ user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10" cy="8" r="4"/><path d="M3 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/><path d="M19 7v6M16 10h6"/></svg>',
+ scan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10"/></svg>',
+ list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8l1.5 1.5L12 7M8 14l1.5 1.5L12 13M14.5 8.5H17M14.5 14.5H17"/></svg>',
+ home:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 11.2 12 4l8 7.2V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8.5 15.5c1.8 1.6 5.2 1.6 7 0" stroke="var(--surface)" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>',
+ users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.7-3.4 3.3-5 6.5-5s5.8 1.6 6.5 5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 15.3c1.9.6 3.1 2.2 3.5 4.7"/></svg>',
+ newc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>',
+ search:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c86a3" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+ logo:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b3fe4" stroke-width="2.4" stroke-linecap="round"><path d="M5 12.5 9.5 17 19 7"/></svg>',
+ back:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg>',
+ clock:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>',
+ shield:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/></svg>'
+};
+const ACTIVE=new Set(["new","collect","review","approved"]);
+function heroHtml(){
+  const top=`<div class="htop">${V.view==="dash"?`<div class="brandpill"><span class="logo">${ICON.logo}</span><span class="bt">${LANG==="en"?"Loan Desk":"贷款案件"}</span></div>
+    <label class="searchpill">${ICON.search}<input id="q" type="search" placeholder="${esc(L("搜索案件编号、客户名字或 IC"))}" value="${esc(V.q)}"></label>`
+    :`<button class="backbtn" data-go="dash" aria-label="${esc(L("回总览"))}">${ICON.back}</button><span class="spacer"></span>`}
+    <button class="langpill" id="langBtn" type="button">${LANG==="en"?"中文":"EN"}</button></div>`;
+  const mode=S.mode==="db"?esc(L("已同步 · 团队共享数据")):S.mode==="local"?`${esc(L("本机模式"))} · ${esc(L("数据只存在这个浏览器"))}`:"";
+  if(V.view==="dash"){
+    const act=S.cases.filter(c=>ACTIVE.has(c.status));const sum=act.reduce((a,c)=>a+(+c.amount||0),0);
+    return `<header class="hero"><div class="inner">${top}
+      <div class="hkey"><div><div class="lbl">${L("进行中贷款总额")}</div><div class="num">RM ${Number(sum).toLocaleString("en-MY")}</div><div class="meta">${act.length}${L("宗进行中案件")}</div></div>
+      <button class="outline-pill" data-go="newcase">${L("开新案件")} ›</button></div>
+      <div class="mode">${mode}</div></div></header>`;
+  }
+  const titles={clients:["客户","先登记客户资料，再为他开案件。一个客户可以有多宗案件。"],newcase:["开新案件","选贷款类型和申请人类别，系统会自动生成文件清单。"],ref:["文件清单参考",""],scan:["AI 扫描","选择要扫描文件的案件"]};
+  let t,s;
+  if(V.view==="case"){const c=S.cases.find(x=>x.id===V.caseId);const cl=c&&client(c.clientId);t=c?`${c.no} · ${cl?.name||""}`:"";s=c?typeLabel(c):""}
+  else{[t,s]=titles[V.view]||["",""];t=L(t);s=L(s)}
+  return `<header class="hero compact"><div class="inner">${top}<div class="htitle">${esc(t)}</div>${s?`<p class="hsub">${esc(s)}</p>`:""}</div></header>`;
+}
+function tabbarHtml(){
+  const cur=v=>String(V.view===v||(v==="dash"&&V.view==="case"));
+  return `<div class="bar-in">
+   <button data-go="dash" aria-current="${cur("dash")}">${ICON.home}<span>${L("首页")}</span></button>
+   <button data-go="clients" aria-current="${cur("clients")}">${ICON.users}<span>${L("客户")}</span></button>
+   <button class="scan" id="scanBtn" aria-current="${cur("scan")}"><span class="ring"><span class="core">${ICON.scan}</span></span><span class="t">${L("AI 扫描")}</span></button>
+   <button data-go="newcase" aria-current="${cur("newcase")}">${ICON.newc}<span>${L("开案")}</span></button>
+   <button data-go="ref" aria-current="${cur("ref")}">${ICON.list}<span>${L("清单")}</span></button></div>`;
+}
+function ring(p){const r=22,C=2*Math.PI*r;return `<svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="${r}" fill="none" stroke="var(--tile)" stroke-width="6"/><circle cx="28" cy="28" r="${r}" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C*p/100} ${C}" transform="rotate(-90 28 28)"/><text x="28" y="32" text-anchor="middle" font-size="12" font-weight="800" fill="var(--fg)" font-family="Plus Jakarta Sans,sans-serif">${p}%</text></svg>`}
+function caseCard(c){const p=pct(c),cl=client(c.clientId);return `<button class="ccard" data-case="${c.id}">
+  <div class="top"><span class="who">${esc(cl?.name||L("(客户已删除)"))}</span><span class="pill s-${c.status}">${SLABEL[c.status]}</span></div>
+  <div class="ty"><span class="mono">${esc(c.no)}</span> · ${esc(typeLabel(c))} ${c.sample?`<span class="tag sample">${L("示例")}</span>`:""}</div>
+  <div class="bot"><span class="amt">${rm(c.amount)}</span><div class="bar ${p.p===100?"full":""}"><i style="width:${p.p}%"></i></div><span class="mono" style="font-size:13px">${p.d}/${p.t}</span></div></button>`}
+function vDash(){
+  const counts=Object.fromEntries(STATUSES.map(([k])=>[k,0]));S.cases.forEach(c=>counts[c.status]=(counts[c.status]||0)+1);
+  const q=V.q.trim().toLowerCase();
+  const rows=S.cases.filter(c=>(!V.filterStatus||c.status===V.filterStatus)&&(!V.filterType||c.type===V.filterType)&&(!q||(c.no+" "+(client(c.clientId)?.name||"")+" "+(client(c.clientId)?.ic||"")).toLowerCase().includes(q)))
+    .sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||""));
+  const total=S.cases.length;const act=S.cases.filter(c=>ACTIVE.has(c.status)&&c.status!=="approved");
+  const follow=act.filter(c=>c.items.some(i=>i.req&&!i.done)).length;
+  let d=0,t=0;act.forEach(c=>{const p=pct(c);d+=p.d;t+=p.t});const overall=t?Math.round(d/t*100):0;
+  return `<div class="quick">
+    <button class="qbtn" data-go="newcase"><span class="qicon q1">${ICON.plus}</span>${L("开新案件")}</button>
+    <button class="qbtn" data-go="clients"><span class="qicon q2">${ICON.user}</span>${L("登记客户")}</button>
+    <button class="qbtn" data-scan><span class="qicon q3">${ICON.scan}</span>${L("AI 扫描")}</button>
+    <button class="qbtn" data-go="ref"><span class="qicon q4">${ICON.list}</span>${L("文件清单")}</button></div>
+  <div class="tiles" style="margin-top:18px">
+    <div style="display:grid;gap:12px;min-width:0">
+      <button class="tile" data-fs="collect"><span class="ti" style="color:var(--warn)">${ICON.clock}</span><span style="min-width:0"><b>${L("需要跟进")}</b><span class="chip">${follow}</span> <small>${L("宗还欠文件")}</small></span></button>
+      <button class="tile alt" data-fs="review"><span class="ti" style="color:var(--ic-violet)">${ICON.shield}</span><span style="min-width:0"><b>${L("在审核")}</b><span class="chip">${counts.review}</span> <small>${L("宗等待审批")}</small></span></button>
+    </div>
+    <div class="tile" style="flex-direction:column;align-items:stretch;cursor:default"><b>${L("整体文件完成度")}</b><small>${act.length}${L("宗进行中案件")}</small>
+      <div class="ringcard"><div><small>${L("必交文件")}</small><div class="v">${d} / ${t}</div></div>${ring(overall)}</div></div>
+  </div>
+  <div class="sec"><h2>${L("按状态")}</h2>${V.filterStatus||V.filterType?`<button class="lnk" data-clear>${L("清除筛选")}</button>`:""}</div>
+  <div class="sgrid">
+    <button class="sbtn" data-fs="" aria-pressed="${!V.filterStatus}"><span class="n">${total}</span><span class="l">${L("全部")}</span></button>
+    ${STATUSES.map(([k,l])=>`<button class="sbtn" data-fs="${k}" aria-pressed="${V.filterStatus===k}"><span class="n">${counts[k]}</span><span class="l"><span class="sdot d-${k}"></span> ${L(l)}</span></button>`).join("")}
+  </div>
+  <div class="sec"><h2>${L("案件列表")}</h2><span class="spacer"></span>
+    <div class="filters" style="margin:0"><select id="ft" aria-label="${esc(L("贷款类型"))}"><option value="">${L("所有贷款类型")}</option>${Object.entries(T).map(([k,t])=>`<option value="${k}" ${V.filterType===k?"selected":""}>${tl(t)}</option>`).join("")}</select></div></div>
+  ${rows.length?`<div class="clist">${rows.map(caseCard).join("")}</div>`:`<div class="panel empty">${total?L("没有符合筛选的案件。"):L("还没有案件。先到「客户」登记客户，再「开新案件」。")}</div>`}`;
+}
+function vScan(){
+  const rows=S.cases.filter(c=>c.status!=="rejected"&&c.status!=="disbursed").sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||""));
+  return `<p class="sub">${L("点一宗案件，就会打开相机或相册。")}</p>${rows.length?`<div class="clist">${rows.map(caseCard).join("")}</div>`:`<div class="panel empty">${L("还没有案件。先到「客户」登记客户，再「开新案件」。")}</div>`}`;
+}
+
+function vClients(){
+  const e=V.editingClient?client(V.editingClient)||{}:{};
+  return `
+  <div class="panel" style="margin-bottom:16px"><h2>${L(V.editingClient?"编辑客户":"登记新客户")}</h2>
+  <form id="cform" class="grid2">
+    <label class="f">${L("姓名 / 公司名 *")}<input id="c_name" required value="${esc(e.name)}"></label>
+    <label class="f">${L("IC / 公司注册号 *")}<input id="c_ic" required value="${esc(e.ic)}" placeholder="900101-14-XXXX"></label>
+    <label class="f">${L("电话 *")}<input id="c_phone" required value="${esc(e.phone)}"></label>
+    <label class="f">Email<input id="c_email" type="email" value="${esc(e.email)}"></label>
+    <label class="f">${L("工作类型")}<select id="c_emp">${["受薪","自雇","公司"].map(x=>`<option value="${x}" ${e.employment===x?"selected":""}>${L(x)}</option>`).join("")}</select></label>
+    <label class="f">${L("月收入 (RM)")}<input id="c_inc" type="number" min="0" value="${esc(e.income||"")}"></label>
+    <label class="f" style="grid-column:1/-1">${L("地址")}<input id="c_addr" value="${esc(e.address)}"></label>
+    <div class="row" style="grid-column:1/-1"><button class="btn" type="submit">${L(V.editingClient?"保存":"登记客户")}</button>${V.editingClient?`<button class="btn ghost" type="button" data-cancel-edit>${L("取消")}</button>`:""}</div>
+  </form></div>
+  ${S.clients.length?`<div class="tablebox"><table><thead><tr><th>${L("姓名")}</th><th>${L("IC / 注册号")}</th><th>${L("电话")}</th><th>${L("工作类型")}</th><th>${L("案件")}</th><th></th></tr></thead><tbody>
+  ${S.clients.slice().sort((a,b)=>(b.createdAt||"").localeCompare(a.createdAt||"")).map(c=>{const n=S.cases.filter(x=>x.clientId===c.id).length;return `<tr><td>${esc(c.name)}${c.sample?`<span class="tag sample">${L("示例")}</span>`:""}</td><td class="mono">${esc(c.ic)}</td><td class="mono">${esc(c.phone)}</td><td>${esc(L(c.employment))}</td><td class="mono">${n}</td><td><div class="row"><button class="linkish" data-open-case-for="${c.id}">${L("开案件")}</button><button class="linkish" data-edit-client="${c.id}">${L("编辑")}</button></div></td></tr>`}).join("")}
+  </tbody></table></div>`:`<div class="panel empty">${L("还没有客户。用上面的表格登记第一位。")}</div>`}`;
+}
+
+function vNewCase(){
+  const cl=V.newcaseClient;
+  return `
+  ${S.clients.length?`<div class="panel"><form id="nform" class="grid2">
+    <label class="f">${L("客户 *")}<select id="n_client" required><option value="">${L("选择客户")}</option>${S.clients.map(c=>`<option value="${c.id}" ${cl===c.id?"selected":""}>${esc(c.name)} · ${esc(c.ic)}</option>`).join("")}</select></label>
+    <label class="f">${L("贷款类型 *")}<select id="n_type">${Object.entries(T).map(([k,t])=>`<option value="${k}">${LANG==="en"?t.en:t.label+" "+t.en}</option>`).join("")}</select></label>
+    <label class="f">${L("申请人类别 *")}<select id="n_prof"></select></label>
+    <label class="f" id="n_sub_wrap">${L("房产类别 *")}<select id="n_sub"></select></label>
+    <label class="f">${L("申请金额 (RM)")}<input id="n_amt" type="number" min="0"></label>
+    <label class="f">${L("年限 (年)")}<input id="n_ten" type="number" min="1" max="40"></label>
+    <label class="f">${L("负责人")}<input id="n_off" placeholder="${L("例如：Agent A")}"></label>
+    <div style="grid-column:1/-1"><h2 style="margin-top:6px">${L("会生成的文件清单")}</h2><div id="n_preview"></div></div>
+    <div class="row" style="grid-column:1/-1"><button class="btn" type="submit">${L("开案件")}</button></div>
+  </form></div>`:`<div class="panel empty">${L("请先到「客户」登记客户。")}<br><br><button class="btn" data-go="clients">${L("去登记客户")}</button></div>`}`;
+}
+function syncNewCaseForm(){
+  const ty=$("#n_type");if(!ty)return;const t=T[ty.value];
+  const prof=$("#n_prof"),cur=prof.value;prof.innerHTML=Object.entries(t.profiles).map(([k,p])=>`<option value="${k}">${L(p.label)}</option>`).join("");if(t.profiles[cur])prof.value=cur;
+  else{const emp=client($("#n_client").value)?.employment;const guess={"受薪":"salaried","自雇":ty.value==="business"?"enterprise":"self","公司":"sdnbhd"}[emp];if(t.profiles[guess])prof.value=guess}
+  const sw=$("#n_sub_wrap"),sub=$("#n_sub");sw.hidden=!t.subtypes;if(t.subtypes){const c=sub.value;sub.innerHTML=Object.entries(t.subtypes).map(([k,s])=>`<option value="${k}">${L(s.label)}</option>`).join("");if(t.subtypes[c])sub.value=c}
+  const items=buildItems(ty.value,prof.value,t.subtypes?sub.value:"");
+  $("#n_preview").innerHTML=groupHtml(items,false);
+}
+function groupHtml(items,interactive){
+  const groups=[...new Set(items.map(i=>i.group))];
+  return groups.map(g=>`<div class="group"><h3>${esc(L(g))}</h3>${items.map((it,idx)=>[it,idx]).filter(([it])=>it.group===g).map(([it,idx])=>`
+   <div class="item ${it.done?"done":""}">${interactive?`<input type="checkbox" id="chk_${idx}" data-tick="${idx}" ${it.done?"checked":""} aria-label="${esc(docMain(it))}">`:`<span class="mono" style="color:var(--muted)">·</span>`}
+   <div><label for="chk_${idx}"><span class="zh">${esc(docMain(it))}</span>${it.req?`<span class="req">${L("必交")}</span>`:`<span class="opt">${L("视情况")}</span>`}</label><div class="en">${esc(docSub(it))}</div>${it.note?`<div class="note">${L("备注：")}${esc(it.note)}</div>`:""}</div>
+   <div class="meta">${interactive?`${it.done?L("已收 ")+dt(it.at)+"<br>":""}${(it.files||[]).map(f=>`<a class="linkish" href="/_blob/${esc(f)}" target="_blank" rel="noopener">${L("查看原件")}</a><br>`).join("")}<button class="linkish" data-note="${idx}">${L("备注")}</button>${it.custom?` · <button class="linkish" data-rmitem="${idx}">${L("删除")}</button>`:""}`:""}</div></div>`).join("")}</div>`).join("");
+}
+
+function vCase(){
+  const c=S.cases.find(x=>x.id===V.caseId);if(!c)return `<div class="panel empty">${L("找不到这宗案件。")}<br><br><button class="btn" data-go="dash">${L("回总览")}</button></div>`;
+  const cl=client(c.clientId)||{},p=pct(c),missing=c.items.filter(i=>i.req&&!i.done);
+  return `${c.sample?`<p class="sub"><span class="tag sample">${L("示例")}</span></p>`:""}
+  <div class="case">
+   <div style="display:flex;flex-direction:column;gap:16px;min-width:0">${aiPanel(c)}<section class="panel"><div class="row"><h2 style="margin:0">${L("文件清单")}</h2><span class="spacer"></span><span class="mono">${p.d}/${p.t} ${L("必交")} · ${p.all}/${p.allT} ${L("全部")}</span></div>
+     <div class="bar ${p.p===100?"full":""}" style="margin:10px 0 16px"><i style="width:${p.p}%"></i></div>
+     ${groupHtml(c.items,true)}
+     <form id="addItem" class="row" style="margin-top:8px"><input id="ai_name" placeholder="${L("加其他文件，例如：银行要求的额外文件")}" style="flex:1;min-width:180px"><button class="btn ghost" type="submit">${L("+ 加文件")}</button></form>
+   </section></div>
+   <aside style="display:flex;flex-direction:column;gap:16px;min-width:0">
+     <section class="panel"><h2>${L("案件状态")}</h2>
+       <div class="pipeline">${STATUSES.map(([k,l])=>`<button data-status="${k}" aria-current="${c.status===k}">${L(l)}</button>`).join("")}</div>
+       ${missing.length?`<div class="notice">${LANG==="en"?`${missing.length} required document(s) outstanding: ${missing.map(i=>esc(docMain(i))).join("; ")}`:`还欠 ${missing.length} 份必交文件：${missing.map(i=>esc(i.zh)).join("、")}`}</div>`:`<div class="notice" style="background:var(--ok-soft)">${L("必交文件已齐全，可以进入审核。")}</div>`}
+       <button class="btn ghost" id="copyMissing" type="button" ${missing.length?"":"disabled"}>${L("复制欠交文件清单 (发 WhatsApp 用)")}</button>
+     </section>
+     ${summaryPanel(c)}
+     <section class="panel"><h2>${L("案件资料")}</h2><dl class="kv">
+       <dt>${L("申请金额 (RM)")}</dt><dd class="mono">${rm(c.amount)}</dd><dt>${L("年限")}</dt><dd>${c.tenure?esc(c.tenure)+(LANG==="en"?" years":" 年"):"—"}</dd>
+       <dt>${L("负责人")}</dt><dd>${esc(c.officer||"—")}</dd><dt>${L("开案日期")}</dt><dd class="mono">${dt(c.createdAt)}</dd>
+       <dt>${L("客户 IC")}</dt><dd class="mono">${esc(cl.ic||"")}</dd><dt>${L("电话")}</dt><dd class="mono">${esc(cl.phone||"")}</dd>
+       <dt>${L("月收入")}</dt><dd class="mono">${rm(cl.income)}</dd></dl>
+       <label class="f" style="margin-top:12px">${L("案件备注")}<textarea id="c_notes">${esc(c.notes)}</textarea></label>
+       <div class="row" style="margin-top:8px"><button class="btn ghost" id="saveNotes" type="button">${L("保存备注")}</button><span class="spacer"></span><button class="btn danger" id="delCase" type="button">${L(V.confirmDel?"确定删除？再按一次":"删除案件")}</button></div>
+     </section>
+     <section class="panel"><h2>${L("记录")}</h2><ul class="log">${(c.log||[]).slice().reverse().map(l=>`<li><span class="mono">${dt(l.at)}</span> ${esc(l.t)}</li>`).join("")}</ul></section>
+   </aside></div>`;
+}
+
+function vRef(){
+  return `
+  <div class="notice">${L("这是马来西亚一般市场做法整理的清单，每家银行 / 金融机构要求不同，请按你们合作的贷款方标准修改。「必交」= 通常一定要；「视情况」= 看银行或个案。")}</div>
+  <div class="ref">${Object.entries(T).flatMap(([tk,t])=>Object.entries(t.profiles).map(([pk,p])=>`<div class="panel"><h2>${tl(t)} · ${L(p.label)}</h2>${p.groups.map(([g,l])=>`<div class="group"><h3>${L(g)}</h3><ul>${l.map(([k,r])=>`<li>${DOC[k][LANG==="en"?1:0]} ${r?`<span class="req">${L("必交")}</span>`:`<span class="opt">${L("视情况")}</span>`}</li>`).join("")}</ul></div>`).join("")}</div>`)).join("")}
+  ${Object.entries(T).filter(([,t])=>t.subtypes).flatMap(([,t])=>Object.entries(t.subtypes).map(([k,s])=>[t,s])).map(([t,s])=>`<div class="panel"><h2>${tl(t)} · ${L("房产文件")} · ${L(s.label)}</h2><p class="sub" style="margin:0 0 8px">${L("加在受薪 / 自雇收入文件之上")}</p><ul>${s.docs.map(([d,r])=>`<li>${DOC[d][LANG==="en"?1:0]} ${r?`<span class="req">${L("必交")}</span>`:`<span class="opt">${L("视情况")}</span>`}</li>`).join("")}</ul></div>`).join("")}</div>`;
+}
+
+// ---------- 事件 ----------
+function touch(c,msg){c.updatedAt=new Date().toISOString();c.log=(c.log||[]).concat(msg?[{at:c.updatedAt,t:msg}]:[]).slice(-60)}
+function curCase(){return S.cases.find(x=>x.id===V.caseId)}
+async function saveCase(c,msg){touch(c,msg);try{await put("cases",c)}catch(e){toast(L("保存失败：")+(e.message||e.code))}}
+
+document.addEventListener("click",async ev=>{
+  const b=ev.target.closest("button,tr[data-case]");if(!b)return;
+  if(b.id==="langBtn"){LANG=LANG==="en"?"zh":"en";try{localStorage.setItem("loanapp.lang",LANG)}catch(e){}render();return}
+  if(b.id==="scanBtn"||b.hasAttribute("data-scan")){if(V.view==="case"&&$("#aiFile")){$("#aiFile").click();return}go("scan");return}
+  if(b.hasAttribute("data-clear")){V.filterStatus="";V.filterType="";render();return}
+  if(b.dataset.go){go(b.dataset.go,{confirmDel:false});return}
+  if(b.dataset.case){const fromScan=V.view==="scan";go("case",{caseId:b.dataset.case,confirmDel:false});if(fromScan)$("#aiFile")?.click();return}
+  if(b.dataset.fs!==undefined){V.filterStatus=b.dataset.fs;render();return}
+  if(b.dataset.editClient){go("clients",{editingClient:b.dataset.editClient});return}
+  if(b.hasAttribute("data-cancel-edit")){go("clients",{editingClient:null});return}
+  if(b.dataset.openCaseFor){go("newcase",{newcaseClient:b.dataset.openCaseFor});syncNewCaseForm();return}
+  const c=curCase();if(!c)return;
+  if(b.dataset.status){if(c.status!==b.dataset.status){const from=SLABEL[c.status];c.status=b.dataset.status;await saveCase(c,`状态：${from} → ${SLABEL[c.status]}`);toast(L("状态已更新"))}return}
+  if(b.dataset.note!==undefined){const it=c.items[+b.dataset.note];const box=document.createElement("form");box.className="row";box.style.marginTop="6px";box.innerHTML=`<input id="note_in" value="${esc(it.note)}" placeholder="${L("例如：只交了 2 个月，还欠 1 个月")}" style="flex:1;min-width:160px"><button class="btn ghost" type="submit">保存</button>`;b.closest(".item").children[1].appendChild(box);b.remove();box.querySelector("input").focus();
+    box.onsubmit=async e=>{e.preventDefault();it.note=box.querySelector("input").value.trim();await saveCase(c,`备注「${it.zh}」`);render()};return}
+  if(b.dataset.rmitem!==undefined){const it=c.items.splice(+b.dataset.rmitem,1)[0];await saveCase(c,`删除文件项「${it.zh}」`);return}
+  if(b.id==="saveNotes"){c.notes=$("#c_notes").value;await saveCase(c,"更新案件备注");toast(L("备注已保存"));return}
+  if(b.id==="copyMissing"){const cl=client(c.clientId)||{};const miss=c.items.filter(i=>i.req&&!i.done);const txt=LANG==="en"?`Hi ${cl.name||""}, for your ${T[c.type].en} application (${c.no}) we still need the following documents:\n`+miss.map((i,n)=>`${n+1}. ${docMain(i)}`).join("\n")+"\nThank you!":`${cl.name||""} 你好，你的${T[c.type].label}申请 (${c.no}) 还需要以下文件：\n`+miss.map((i,n)=>`${n+1}. ${i.zh}`).join("\n")+"\n谢谢！";
+    try{await navigator.clipboard.writeText(txt);toast(L("已复制，可以贴到 WhatsApp"))}catch(e){const ta=document.createElement("textarea");ta.value=txt;b.after(ta);ta.select();toast(L("请手动复制下面的文字"))}return}
+  if(b.id==="delCase"){if(!V.confirmDel){V.confirmDel=true;render();return}V.confirmDel=false;await del("cases",c.id);go("dash");toast(L("案件已删除"));return}
+});
+document.addEventListener("change",async ev=>{
+  const t=ev.target;
+  if(t.dataset.tick!==undefined){const c=curCase();const it=c.items[+t.dataset.tick];it.done=t.checked;it.at=t.checked?new Date().toISOString():null;
+    if(t.checked&&c.status==="new")c.status="collect";
+    const p=pct(c);
+    await saveCase(c,(t.checked?"已收：":"取消：")+it.zh);
+    if(t.checked&&p.p===100)toast(L("必交文件齐全了 ✓"));return}
+  if(t.id==="ft"){V.filterType=t.value;render();return}
+  if(t.id==="fs2"){V.filterStatus=t.value;render();return}
+  if(["n_type","n_prof","n_sub","n_client"].includes(t.id))syncNewCaseForm();
+});
+document.addEventListener("input",ev=>{if(ev.target.id==="q"){V.q=ev.target.value;render()}});
+document.addEventListener("submit",async ev=>{
+  ev.preventDefault();const f=ev.target;
+  if(f.id==="cform"){const ex=V.editingClient?client(V.editingClient):null;
+    const obj={...(ex||{}),id:ex?.id||uid("cli_"),name:$("#c_name").value.trim(),ic:$("#c_ic").value.trim(),phone:$("#c_phone").value.trim(),email:$("#c_email").value.trim(),employment:$("#c_emp").value,income:+$("#c_inc").value||0,address:$("#c_addr").value.trim(),createdAt:ex?.createdAt||new Date().toISOString()};
+    try{await put("clients",obj);toast(L(ex?"已保存":"客户已登记"));V.editingClient=null;render()}catch(e){toast(L("保存失败：")+(e.message||e.code))}return}
+  if(f.id==="nform"){const clientId=$("#n_client").value;if(!clientId){toast(L("请选择客户"));return}
+    const type=$("#n_type").value,profile=$("#n_prof").value,subtype=T[type].subtypes?$("#n_sub").value:"";
+    const max=S.cases.reduce((m,c)=>Math.max(m,parseInt(String(c.no).replace(/\D/g,""))||0),0);
+    const now=new Date().toISOString();
+    const c={id:uid("case_"),no:"LN-"+String(max+1).padStart(4,"0"),clientId,type,profile,subtype,amount:+$("#n_amt").value||0,tenure:+$("#n_ten").value||0,officer:$("#n_off").value.trim(),status:"new",items:buildItems(type,profile,subtype),notes:"",createdAt:now,updatedAt:now,log:[{at:now,t:"开案"}]};
+    try{await put("cases",c);V.newcaseClient="";go("case",{caseId:c.id});toast(L("案件已开，清单已生成"))}catch(e){toast(L("开案失败：")+(e.message||e.code))}return}
+  if(f.id==="addItem"){const name=$("#ai_name").value.trim();if(!name)return;const c=curCase();c.items.push({key:"custom",group:"其他文件",req:true,zh:name,en:name,done:false,at:null,note:"",custom:true});await saveCase(c,`新增文件项「${name}」`);return}
+});
+const _r=render;render=function(){_r();if(V.view==="newcase")syncNewCaseForm()};
+// ---------- AI 文件识别 + 资料抽取 ----------
+Object.assign(EN,{
+"AI 文件识别":"AI document check","上传客户文件照片，AI 会认出是什么文件、对上清单、检查问题，并抽出资料。你确认之后才会打勾。":"Upload photos of the client's documents. AI identifies each one, matches it to the checklist, checks for problems and pulls out the data. Nothing is ticked until you confirm.",
+"选择照片 / 拍照":"Choose photos / take photo","分析中…":"Analysing…","AI 识别为":"AI identified as","对应清单项目":"Checklist item","不在清单里":"Not on checklist","发现的问题":"Issues found","没有发现问题":"No issues found","抽出的资料 (可修改)":"Extracted data (editable)","确认并打勾":"Confirm & tick","只保存资料":"Save data only","忽略":"Dismiss","已确认":"Confirmed","已忽略":"Dismissed","查看原件":"View original","把握度":"confidence",
+"资料汇总":"Data summary","还没有确认的文件资料。上传并确认文件后，这里会自动汇总。":"No confirmed document data yet. Upload and confirm documents to fill this in.",
+"参考 DSR":"Indicative DSR","现有每月承担 ÷ 平均净收入。只是初步参考，各银行算法不同。":"Monthly commitments ÷ average net income. Indicative only; each bank calculates differently.",
+"AI 识别只在线上版本可用。":"AI document check is only available in the online version.","这个浏览器 / App 不支持把图片送去 AI。":"This browser or app cannot send images to AI.",
+"你没有允许这个页面使用 Claude，所以 AI 识别关掉了。":"You did not allow this page to use Claude, so the AI check is off.","AI 太忙，等一下再试。":"AI is busy. Try again shortly.","AI 没能读懂这张图，请重拍清楚一点。":"AI could not read this image. Please retake it more clearly.","AI 识别失败：":"AI check failed: ","目前只支持照片 (JPG / PNG)。PDF 请先截图。":"Only photos (JPG / PNG) for now. Please screenshot PDFs.",
+"隐私提示 (PDPA)：照片会存在这个页面的文件库，并送去 Claude 分析；只有能打开这个页面的人看得到。AI 可能会看错，请一定要人工核对。":"Privacy (PDPA): photos are stored in this page's file store and sent to Claude for analysis; only people who can open this page can see them. AI can make mistakes, so always check by hand.",
+"文件已确认并打勾":"Document confirmed and ticked","保存 API Key":"Save API key","移除 API Key":"Remove API key","API Key 已保存在这台设备":"API key saved on this device","API Key 不对或没有权限，请重新输入。":"API key is invalid or not permitted. Please enter it again.","网页版要用你自己的 Anthropic API Key 才能用 AI 识别。Key 只存在这台设备的浏览器，不会上传到 GitHub。":"The web version needs your own Anthropic API key for the AI check. The key is stored only in this device's browser and never uploaded to GitHub.","隐私提示 (PDPA)：照片会直接从这台设备送去 Anthropic 分析，不会存在 GitHub。案件资料只存在这台设备的浏览器。AI 可能会看错，请一定要人工核对。":"Privacy (PDPA): photos go straight from this device to Anthropic for analysis and are never stored on GitHub. Case data stays only in this device's browser. AI can make mistakes, so always check by hand.","资料已保存":"Data saved","个文件":" file(s)","收起":"Hide","显示已处理的":"Show processed"
+});
+const FIELDS={name:["姓名","Name"],ic_number:["IC 号码","IC number"],company_name:["公司名","Company name"],ssm_no:["SSM 注册号","SSM reg. no."],employer:["雇主","Employer"],document_date:["文件日期","Document date"],period:["期间","Period"],gross_income:["总收入 (RM)","Gross income (RM)"],net_income:["净收入 (RM)","Net income (RM)"],epf_contribution:["EPF 供款 (RM)","EPF contribution (RM)"],epf_balance:["EPF 余额 (RM)","EPF balance (RM)"],total_credits:["总入账 (RM)","Total credits (RM)"],avg_balance:["平均余额 (RM)","Average balance (RM)"],monthly_commitments:["每月固定还款 (RM)","Monthly commitments (RM)"],commitments_detail:["还款明细","Commitment details"],annual_income:["年收入 (RM)","Annual income (RM)"],property_address:["房产地址","Property address"],purchase_price:["买价 (RM)","Purchase price (RM)"],outstanding_balance:["贷款余额 (RM)","Outstanding balance (RM)"],other:["其他","Other"]};
+const NUMF=new Set(["gross_income","net_income","epf_contribution","epf_balance","total_credits","avg_balance","monthly_commitments","annual_income","purchase_price","outstanding_balance"]);
+const FL=k=>(FIELDS[k]||[k,k])[LANG==="en"?1:0];
+const AI={sample:null,assets:null,imgOK:false,accept:"image/jpeg,image/png,image/webp",checked:false,off:"",busy:{},showDone:{}};
+function directSample(key){
+  const toB64=b=>new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(",")[1]);fr.onerror=rej;fr.readAsDataURL(b)});
+  const json=async(prompt,opt={})=>{
+    const imgs=[].concat(opt.images||[]);const content=[];
+    for(const b of imgs)content.push({type:"image",source:{type:"base64",media_type:b.type||"image/jpeg",data:await toB64(b)}});
+    content.push({type:"text",text:prompt});
+    let res;try{res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-opus-5-5",max_tokens:2000,messages:[{role:"user",content}]})})}catch(e){throw {code:"upstream_error",message:String(e)}}
+    if(!res.ok){throw {code:res.status===401||res.status===403?"bad_key":res.status===429||res.status===529?"rate_limited":"upstream_error",message:"HTTP "+res.status}}
+    const data=await res.json();const text=(data.content||[]).filter(c=>c.type==="text").map(c=>c.text).join("");
+    const a=text.indexOf("{"),z=text.lastIndexOf("}");if(a<0||z<a)throw {code:"invalid_json",text};
+    try{return JSON.parse(text.slice(a,z+1))}catch(e){throw {code:"invalid_json",text}}
+  };
+  return {json,limits:async()=>({images:{maxCount:5,maxInputBytes:1e7,mediaTypes:["image/jpeg","image/png","image/webp"]}})};
+}
+async function aiInit(){
+  if(!window.claude?.use){
+    AI.standalone=true;let key="";try{key=localStorage.getItem("loanapp.apikey")||""}catch(e){}
+    if(key){AI.sample=directSample(key);AI.imgOK=true}
+    AI.checked=true;render();return;
+  }
+  try{AI.sample=await window.claude.use("sample")}catch(e){}
+  try{AI.assets=await window.claude.use("assets")}catch(e){}
+  if(AI.sample){try{const lim=await AI.sample.limits();if(lim.images){AI.imgOK=true;AI.accept=lim.images.mediaTypes.join(",")}}catch(e){}}
+  AI.checked=true;render();
+}
+function aiPanel(c){
+  let body;
+  if(!AI.checked&&S.mode==="db")body=`<p class="sub">${L("载入中…")}</p>`;
+  else if(AI.standalone&&!AI.sample)body=`<form id="keyForm" class="row"><input id="apiKey" type="password" autocomplete="off" placeholder="sk-ant-..." style="flex:1;min-width:200px"><button class="btn" type="submit">${L("保存 API Key")}</button></form><p class="privacy">${L("网页版要用你自己的 Anthropic API Key 才能用 AI 识别。Key 只存在这台设备的浏览器，不会上传到 GitHub。")}</p>`;
+  else if(!AI.sample)body=`<p class="sub">${L("AI 识别只在线上版本可用。")}</p>`;
+  else if(!AI.imgOK)body=`<p class="sub">${L("这个浏览器 / App 不支持把图片送去 AI。")}</p>`;
+  else if(AI.off)body=`<p class="sub">${esc(AI.off)}</p>`;
+  else body=`<div class="row"><label class="drop" for="aiFile"><span class="btn">${L("选择照片 / 拍照")}</span><input id="aiFile" type="file" accept="${esc(AI.accept)}" multiple hidden></label>${AI.standalone?`<button class="linkish" data-rmkey>${L("移除 API Key")}</button>`:""}</div>`;
+  const ups=(c.uploads||[]);const busy=Object.values(AI.busy).filter(b=>b.caseId===c.id);
+  const open=ups.filter(u=>u.status==="pending"),done=ups.filter(u=>u.status!=="pending");
+  return `<section class="panel ai"><div class="row"><h2 style="margin:0">${L("AI 文件识别")}</h2><span class="spacer"></span>${done.length?`<button class="linkish" data-toggle-done>${AI.showDone[c.id]?L("收起"):L("显示已处理的")} (${done.length})</button>`:""}</div>
+  <p class="sub" style="margin:6px 0 12px">${L("上传客户文件照片，AI 会认出是什么文件、对上清单、检查问题，并抽出资料。你确认之后才会打勾。")}</p>
+  ${body}
+  ${busy.map(b=>`<div class="up busy"><div class="thumb">${b.url?`<img src="${esc(b.url)}" alt="">`:""}</div><div><b>${esc(b.name)}</b><div class="sub" style="margin:4px 0 0">${L("分析中…")}</div></div></div>`).join("")}
+  ${open.map(u=>upCard(c,u)).join("")}
+  ${AI.showDone[c.id]?done.map(u=>upCard(c,u)).join(""):""}
+  <p class="privacy">${AI.standalone?L("隐私提示 (PDPA)：照片会直接从这台设备送去 Anthropic 分析，不会存在 GitHub。案件资料只存在这台设备的浏览器。AI 可能会看错，请一定要人工核对。"):L("隐私提示 (PDPA)：照片会存在这个页面的文件库，并送去 Claude 分析；只有能打开这个页面的人看得到。AI 可能会看错，请一定要人工核对。")}</p></section>`;
+}
+function upCard(c,u){
+  const a=u.ai||{},pend=u.status==="pending";const url=u.assetId?"/_blob/"+u.assetId:"";
+  const sel=u.match??-1;const issues=a.issues||[];const f=a.fields||{};
+  const label=LANG==="en"?(a.doc_label_en||a.doc_label_zh||""):(a.doc_label_zh||a.doc_label_en||"");
+  return `<div class="up ${pend?"":"settled"}" data-up="${u.id}"><div class="thumb">${url?`<a href="${url}" target="_blank" rel="noopener"><img src="${url}" alt="${esc(u.name)}"></a>`:""}</div>
+  <div style="min-width:0"><div class="row" style="gap:6px"><b style="overflow-wrap:anywhere">${esc(u.name)}</b>${pend?"":`<span class="pill ${u.status==="confirmed"?"s-approved":"s-new"}">${L(u.status==="confirmed"?"已确认":"已忽略")}</span>`}</div>
+  <div style="margin:4px 0">${L("AI 识别为")}：<b>${esc(label)}</b> <span class="mono" style="color:var(--muted)">${Math.round((a.confidence||0)*100)}% ${L("把握度")}</span></div>
+  ${pend?`<label class="f" style="max-width:420px">${L("对应清单项目")}<select data-umatch="${u.id}"><option value="-1">${L("不在清单里")}</option>${c.items.map((it,i)=>`<option value="${i}" ${i===sel?"selected":""}>${esc(docMain(it))}${it.done?" ✓":""}</option>`).join("")}</select></label>`:(sel>=0&&c.items[sel]?`<div class="sub" style="margin:0">→ ${esc(docMain(c.items[sel]))}</div>`:"")}
+  <div class="issues ${issues.length?"":"ok"}">${issues.length?`<b>${L("发现的问题")}</b><ul>${issues.map(i=>`<li>${esc(LANG==="en"?(i.en||i.zh):(i.zh||i.en))}</li>`).join("")}</ul>`:L("没有发现问题")}</div>
+  ${Object.keys(f).length?`<div class="h3">${L("抽出的资料 (可修改)")}</div><div class="fields">${Object.entries(f).map(([k,v])=>`<label class="f">${esc(FL(k))}<input data-ufield="${u.id}|${k}" value="${esc(v)}" ${pend?"":"disabled"} ${NUMF.has(k)?'inputmode="decimal"':""}></label>`).join("")}</div>`:""}
+  ${pend?`<div class="row" style="margin-top:10px"><button class="btn" data-uconfirm="${u.id}" ${sel<0?"disabled":""}>${L("确认并打勾")}</button><button class="btn ghost" data-usave="${u.id}">${L("只保存资料")}</button><button class="btn danger" data-uignore="${u.id}">${L("忽略")}</button></div>`:""}
+  </div></div>`;
+}
+function summaryPanel(c){
+  const ok=(c.uploads||[]).filter(u=>u.status==="confirmed"&&u.ai?.fields);
+  if(!ok.length)return `<section class="panel"><h2>${L("资料汇总")}</h2><p class="sub" style="margin:0">${L("还没有确认的文件资料。上传并确认文件后，这里会自动汇总。")}</p></section>`;
+  const num=v=>{const n=parseFloat(String(v).replace(/[^\d.\-]/g,""));return isFinite(n)?n:null};
+  const vals=k=>ok.map(u=>u.ai.fields[k]).filter(v=>v!==undefined&&v!=="");
+  const avg=k=>{const a=vals(k).map(num).filter(n=>n!==null);return a.length?a.reduce((x,y)=>x+y,0)/a.length:null};
+  const last=k=>{const a=vals(k);return a.length?a[a.length-1]:null};
+  const rows=[];
+  for(const k of ["name","ic_number","company_name","employer"]){const v=last(k);if(v)rows.push([FL(k),esc(v)])}
+  const gross=avg("gross_income"),net=avg("net_income"),cred=avg("total_credits"),com=last("monthly_commitments")!==null?num(last("monthly_commitments")):null;
+  if(gross!==null)rows.push([L("平均")+FL("gross_income"),rm(Math.round(gross))]);
+  if(net!==null)rows.push([L("平均")+FL("net_income"),rm(Math.round(net))]);
+  if(cred!==null)rows.push([L("平均")+FL("total_credits"),rm(Math.round(cred))]);
+  if(com!==null)rows.push([FL("monthly_commitments"),rm(Math.round(com))]);
+  // name / IC consistency across documents
+  const names=[...new Set(vals("name").map(v=>String(v).trim().toUpperCase()))],ics=[...new Set(vals("ic_number").map(v=>String(v).replace(/\D/g,"")))];
+  const warn=[];if(names.length>1)warn.push(LANG==="en"?"Names differ between documents: ":"不同文件的名字不一样："+names.join(" / "));if(ics.length>1)warn.push((LANG==="en"?"IC numbers differ between documents: ":"不同文件的 IC 号码不一样：")+ics.join(" / "));
+  const dsr=(com!==null&&net)?Math.round(com/net*100):null;
+  return `<section class="panel"><h2>${L("资料汇总")}</h2><dl class="kv">${rows.map(([a,b])=>`<dt>${a}</dt><dd class="mono">${b}</dd>`).join("")}
+  ${dsr!==null?`<dt>${L("参考 DSR")}</dt><dd><span class="mono" style="font-size:18px;color:${dsr>70?"var(--bad)":dsr>60?"var(--warn)":"var(--ok)"}">${dsr}%</span></dd>`:""}</dl>
+  ${dsr!==null?`<p class="sub" style="margin:6px 0 0;font-size:12px">${L("现有每月承担 ÷ 平均净收入。只是初步参考，各银行算法不同。")}</p>`:""}
+  ${warn.length?`<div class="issues" style="margin-top:10px"><ul>${warn.map(w=>`<li>${esc(w)}</li>`).join("")}</ul></div>`:""}</section>`;
+}
+EN["平均"]="Avg. ";
+async function shrink(file){
+  try{const bmp=await createImageBitmap(file);const k=Math.min(1,2000/Math.max(bmp.width,bmp.height));if(k===1&&file.size<2.5e6)return file;
+    const cv=document.createElement("canvas");cv.width=Math.round(bmp.width*k);cv.height=Math.round(bmp.height*k);cv.getContext("2d").drawImage(bmp,0,0,cv.width,cv.height);
+    return await new Promise(r=>cv.toBlob(b=>r(b||file),"image/jpeg",0.85));}catch(e){return file}
+}
+function aiPrompt(c){
+  const cl=client(c.clientId)||{};
+  const list=c.items.map((it,i)=>`${i}: ${it.zh} / ${it.en}${it.done?" (already received)":""}`).join("\n");
+  return `You are checking a document a client submitted for a Malaysian loan application. Today is ${new Date().toISOString().slice(0,10)}.
+Loan: ${T[c.type].en} (${T[c.type].profiles[c.profile]?.label||c.profile}${c.subtype?", "+c.subtype:""}).
+Applicant on file: name "${cl.name||""}", IC / reg. no. "${cl.ic||""}".
+Case checklist (index: name):
+${list}
+
+Look at the image and:
+1. Identify what document it is and which checklist index it matches (-1 if none).
+2. Check for problems: blurry or cut off; wrong or different person/company name or IC vs the applicant on file; too old for its purpose (payslips and bank statements should be within the last 3 months, EPF statement within about a year); missing pages or months; signs of editing or inconsistent numbers; not the document type the checklist needs. Only report real problems you can see.
+3. Extract the fields that are visible. Use only these keys: name, ic_number, company_name, ssm_no, employer, document_date (YYYY-MM-DD), period, gross_income, net_income, epf_contribution, epf_balance, total_credits, avg_balance, monthly_commitments, commitments_detail, annual_income, property_address, purchase_price, outstanding_balance. Money as plain numbers in RM (no commas). For a payslip, monthly_commitments = total of loan/financing deductions shown. Omit keys you cannot read. Never guess a value.
+
+Reply with only JSON in this shape:
+{"match_index":0,"doc_label_zh":"工资单","doc_label_en":"Payslip","confidence":0.9,"issues":[{"zh":"问题（简体中文）","en":"issue in English"}],"fields":{"name":"...","net_income":4200}}`;
+}
+async function aiFiles(files){
+  const c=curCase();if(!c||!AI.sample)return;
+  for(const file of files){
+    if(!/^image\//.test(file.type)||!AI.accept.split(",").includes(file.type)){toast(L("目前只支持照片 (JPG / PNG)。PDF 请先截图。"));continue}
+    const bid=uid("up_");const local=URL.createObjectURL(file);AI.busy[bid]={caseId:c.id,name:file.name,url:local};render();
+    try{
+      const img=await shrink(file);
+      let assetId="";
+      if(AI.assets){try{const r=await AI.assets.upload(img);assetId=r.id}catch(e){}}
+      const ai=await AI.sample.json(aiPrompt(c),{images:[img],modelTier:"default"});
+      const fields={};for(const [k,v] of Object.entries(ai?.fields||{}))if(v!==null&&v!==""&&FIELDS[k])fields[k]=typeof v==="object"?JSON.stringify(v):v;
+      const m=Number.isInteger(ai?.match_index)&&ai.match_index>=0&&ai.match_index<c.items.length?ai.match_index:-1;
+      const rec={id:bid,name:file.name,assetId,status:"pending",match:m,at:new Date().toISOString(),ai:{doc_label_zh:String(ai?.doc_label_zh||""),doc_label_en:String(ai?.doc_label_en||""),confidence:+ai?.confidence||0,issues:Array.isArray(ai?.issues)?ai.issues.slice(0,8).map(i=>({zh:String(i?.zh||i||""),en:String(i?.en||i||"")})):[],fields}};
+      const cc=S.cases.find(x=>x.id===c.id);cc.uploads=(cc.uploads||[]).concat(rec);
+      delete AI.busy[bid];await saveCase(cc,`AI 识别：${file.name} → ${rec.ai.doc_label_zh||"?"}`);
+    }catch(e){
+      delete AI.busy[bid];
+      const code=e?.code;
+      if(code==="bad_key"){toast(L("API Key 不对或没有权限，请重新输入。"));try{localStorage.removeItem("loanapp.apikey")}catch(_){}AI.sample=null;AI.imgOK=false;render();return}
+      if(code==="not_granted"){AI.off=L("你没有允许这个页面使用 Claude，所以 AI 识别关掉了。");render();return}
+      toast(code==="rate_limited"||code==="queue_overflow"?L("AI 太忙，等一下再试。"):code==="invalid_json"||code==="image_rejected"||code==="refused"?L("AI 没能读懂这张图，请重拍清楚一点。"):L("AI 识别失败：")+(code||e?.message||""));
+      render();
+    }finally{URL.revokeObjectURL(local)}
+  }
+}
+function upFind(id){const c=curCase();return [c,(c?.uploads||[]).find(u=>u.id===id)]}
+document.addEventListener("change",ev=>{const t=ev.target;
+  if(t.id==="aiFile"){const fs=[...t.files];t.value="";aiFiles(fs);return}
+  if(t.dataset.umatch){const [,u]=upFind(t.dataset.umatch);if(u){u.match=+t.value;render()}}
+});
+document.addEventListener("submit",ev=>{if(ev.target.id!=="keyForm")return;ev.preventDefault();const k=$("#apiKey").value.trim();if(!k)return;try{localStorage.setItem("loanapp.apikey",k)}catch(e){}AI.sample=directSample(k);AI.imgOK=true;render();toast(L("API Key 已保存在这台设备"))});
+document.addEventListener("input",ev=>{const t=ev.target;if(t.dataset.ufield){const [id,k]=t.dataset.ufield.split("|");const [,u]=upFind(id);if(u)u.ai.fields[k]=t.value}});
+document.addEventListener("click",async ev=>{const b=ev.target.closest("button");if(!b)return;
+  if(b.hasAttribute("data-rmkey")){try{localStorage.removeItem("loanapp.apikey")}catch(e){}AI.sample=null;AI.imgOK=false;render();return}
+  if(b.hasAttribute("data-toggle-done")){const c=curCase();AI.showDone[c.id]=!AI.showDone[c.id];render();return}
+  const id=b.dataset.uconfirm||b.dataset.usave||b.dataset.uignore;if(!id)return;
+  const [c,u]=upFind(id);if(!u)return;
+  if(b.dataset.uconfirm){const it=c.items[u.match];if(!it)return;it.done=true;it.at=new Date().toISOString();it.files=(it.files||[]).concat(u.assetId?[u.assetId]:[]);u.status="confirmed";if(c.status==="new")c.status="collect";
+    await saveCase(c,`确认 AI 文件：${u.name} → 已收「${it.zh}」`);toast(L("文件已确认并打勾"));}
+  else if(b.dataset.usave){u.status="confirmed";u.match=-1;await saveCase(c,`保存 AI 资料：${u.name}`);toast(L("资料已保存"))}
+  else{u.status="ignored";await saveCase(c,`忽略 AI 文件：${u.name}`)}
+});
+boot().then(aiInit);
+</script>
+
+</body>
+</html>
